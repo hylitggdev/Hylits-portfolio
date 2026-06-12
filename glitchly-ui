@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glitchly | Terminal Access</title>
+    
+    <!-- Google Fonts: Space Mono (Code) and Russo One (Industrial Headers) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Russo+One&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- CSS VARIABLES & THEME --- */
+        :root {
+            --bg-color: #0d0d0d;
+            --surface-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --accent-color: #ccff00; /* Acid Green */
+            --accent-hover: #b3e600;
+            --border-color: #ffffff;
+            --grid-line: rgba(255, 255, 255, 0.1);
+            
+            --font-head: 'Russo One', sans-serif;
+            --font-mono: 'Space Mono', monospace;
+            
+            --hard-shadow: 6px 6px 0px var(--accent-color);
+            --hard-shadow-hover: 2px 2px 0px var(--accent-color);
+        }
+
+        /* --- RESET --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-mono);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND FX (NOISE & GRID) --- */
+        .bg-noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.05;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjY1IiBudW1PY3RhdmVzTMiMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNnKSIgb3BhY2l0eT0iMSIvPjwvc3ZnPg==');
+        }
+
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- MARQUEE STRIP --- */
+        .marquee-strip {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            padding: 10px 0;
+            font-family: var(--font-head);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .marquee-content {
+            display: inline-block;
+            animation: scrollText 20s linear infinite;
+        }
+
+        @keyframes scrollText {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- HEADER --- */
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding: 20px 0;
+            background: rgba(13, 13, 13, 0.9);
+            backdrop-filter: blur(5px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            color: var(--text-color);
+            text-decoration: none;
+            position: relative;
+            display: inline-block;
+            cursor: default;
+            transition: color 0.3s;
+        }
+
+        .logo:hover {
+            color: var(--accent-color);
+        }
+
+        /* Positional Glitch Animation (CSS) */
+        .logo::after {
+            content: '_V.1.0';
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--accent-color);
+            position: absolute;
+            bottom: 0;
+            right: -40px;
+            opacity: 0.7;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            font-size: 0.9rem;
+            position: relative;
+            transition: color 0.3s;
+        }
+
+        nav a::before {
+            content: '[';
+            margin-right: 5px;
+            color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        nav a::after {
+            content: ']';
+            margin-left: 5px;
+            color: var(--accent-color);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-color);
+        }
+
+        nav a:hover::before, nav a:hover::after {
+            opacity: 1;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            padding: 100px 0 60px;
+            text-align: left;
+            border-bottom: 2px solid var(--grid-line);
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: var(--font-head);
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 0.9;
+            margin-bottom: 20px;
+            color: var(--text-color);
+            text-transform: uppercase;
+        }
+
+        .hero h1 span {
+            color: var(--accent-color);
+            display: inline-block;
+            position: relative;
+        }
+
+        /* Glitch Effect on Hover */
+        .glitch-text:hover {
+            animation: glitch-anim 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
+            color: var(--accent-color);
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            color: #888;
+            margin-bottom: 40px;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 20px;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: var(--text-color);
+            color: var(--bg-color);
+            padding: 15px 40px;
+            font-family: var(--font-head);
+            text-transform: uppercase;
+            text-decoration: none;
+            font-size: 1.2rem;
+            box-shadow: var(--hard-shadow);
+            transition: all 0.2s ease;
+            border: 2px solid var(--text-color);
+        }
+
+        .cta-btn:hover {
+            transform: translate(4px, 4px);
+            box-shadow: var(--hard-shadow-hover);
+            background: var(--bg-color);
+            color: var(--accent-color);
+        }
+
+        /* --- CONTROLS SECTION --- */
+        .controls {
+            padding: 40px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 0;
+            border: 2px solid var(--border-color);
+        }
+
+        .filter-btn {
+            background: transparent;
+            border: none;
+            border-right: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 25px;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:last-child {
+            border-right: none;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        /* --- GAME GRID (BRUTALIST STYLE) --- */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 40px;
+            padding-bottom: 100px;
+            min-height: 300px;
+        }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 100px 20px;
+            border: 2px dashed var(--border-color);
+            background: repeating-linear-gradient(
+                45deg,
+                var(--surface-color),
+                var(--surface-color) 10px,
+                #151515 10px,
+                #151515 20px
+            );
+            display: block; /* Default visible */
+        }
+
+        .empty-state h3 {
+            font-family: var(--font-head);
+            font-size: 2rem;
+            color: var(--border-color);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+        }
+        
+        .empty-state p {
+            color: #888;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            border-top: 2px solid var(--border-color);
+            background: var(--surface-color);
+            padding: 60px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer-content h4 {
+            font-family: var(--font-head);
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+
+        .footer-content p {
+            max-width: 400px;
+            margin: 0 auto 30px;
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-color);
+            transition: 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--accent-color);
+            color: var(--bg-color);
+            border-color: var(--accent-color);
+        }
+
+        /* --- UTILITIES --- */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .hero { padding: 60px 0 40px; text-align: center; }
+            .hero p { border-left: none; padding-left: 0; margin: 0 auto 30px; }
+            .filters { width: 100%; overflow-x: auto; }
+            .filter-btn { flex: 1; white-space: nowrap; }
+            .header-inner { flex-direction: column; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Noise Overlay -->
+    <div class="bg-noise"></div>
+    <div class="bg-grid"></div>
+
+    <!-- Scrolling Marquee -->
+    <div class="marquee-strip">
+        <div class="marquee-content">
+            SYSTEM STATUS: ONLINE // GLITCHLY PORTAL // DATABASE EMPTY // WAITING FOR INPUT // 
+            SYSTEM STATUS: ONLINE // GLITCHLY PORTAL // DATABASE EMPTY // WAITING FOR INPUT //
+        </div>
+    </div>
+
+    <header>
+        <div class="container header-inner">
+            <!-- Updated Name -->
+            <a href="#" class="logo" data-value="GLITCHLY">GLITCHLY</a>
+            <nav>
+                <ul>
+                    <li><a href="#">/Home</a></li>
+                    <li><a href="#games">/Repacks</a></li>
+                    <li><a href="#request">/Request</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Optimize.<br><span>Compress.</span><br>Dominate.</h1>
+            <p>Access the secured archives of Glitchly. We strip the bloat, keep the quality. Full games. Fraction of the size.</p>
+            <a href="#games" class="cta-btn">Initialize_Download()</a>
+        </section>
+
+        <!-- Controls & Grid -->
+        <section id="games">
+            <div class="controls">
+                <div style="font-family: var(--font-head); font-size: 1.5rem; color: var(--border-color);">
+                    DATABASE_
+                </div>
+                <div class="filters">
+                    <button class="filter-btn active" data-filter="all">[ALL]</button>
+                    <button class="filter-btn" data-filter="action">ACTION</button>
+                    <button class="filter-btn" data-filter="rpg">RPG</button>
+                    <button class="filter-btn" data-filter="strategy">STRAT</button>
+                </div>
+            </div>
+
+            <!-- EMPTY GRID -->
+            <div class="game-grid">
+                <div class="empty-state" id="empty-state">
+                    <h3>ERROR 404: NO DATA</h3>
+                    <p>The game database is currently empty. Check back later for updates.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <!-- Updated Name -->
+            <h4>GLITCHLY</h4>
+            <p>Unofficial Repack Group. We do not host any files. All rights reserved to respective developers.</p>
+            <div class="social-links">
+                <a href="#">Dc</a>
+                <a href="#">Tw</a>
+                <a href="#">Ig</a>
+                <a href="#">Tel</a>
+            </div>
+            <p style="margin-top: 30px; font-size: 0.7rem; opacity: 0.5;">SYSTEM GENERATED: 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const gameCards = document.querySelectorAll('.game-card');
+            const emptyState = document.getElementById('empty-state');
+            const logo = document.querySelector('.logo');
+
+            // --- LOGO GLITCH EFFECT (Hacker Text Scramble) ---
+            const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&";
+
+            logo.onmouseover = event => {
+                let iteration = 0;
+                clearInterval(event.target.interval);
+
+                event.target.interval = setInterval(() => {
+                    event.target.innerText = event.target.innerText
+                        .split("")
+                        .map((letter, index) => {
+                            if(index < iteration) {
+                                return event.target.dataset.value[index];
+                            }
+                            return letters[Math.floor(Math.random() * 26)]
+                        })
+                        .join("");
+                    
+                    if(iteration >= event.target.dataset.value.length){ 
+                        clearInterval(event.target.interval);
+                    }
+                    
+                    iteration += 1 / 3;
+                }, 30);
+            }
+
+            // --- FILTER LOGIC ---
+            const updateEmptyState = (visibleCount) => {
+                if (visibleCount === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                }
+            };
+
+            // Initial check (Since there are no cards, visibleCount is 0)
+            updateEmptyState(gameCards.length);
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Toggle active state
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const filterValue = btn.getAttribute('data-filter');
+                    let visibleCount = 0;
+
+                    gameCards.forEach(card => {
+                        const category = card.getAttribute('data-category');
+
+                        if (filterValue === 'all' || filterValue === category) {
+                            card.classList.remove('hidden');
+                            visibleCount++;
+                        } else {
+                            card.classList.add('hidden');
+                        }
+                    });
+
+                    updateEmptyState(visibleCount);
+                });
+            });
+
+            // --- RANDOM VISUAL GLITCH (CSS Shadow) ---
+            setInterval(() => {
+                if(Math.random() > 0.95) {
+                    logo.style.textShadow = `2px 2px var(--accent-color), -2px -2px red`;
+                    setTimeout(() => {
+                        logo.style.textShadow = 'none';
+                    }, 100);
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
